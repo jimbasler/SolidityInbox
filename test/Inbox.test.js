@@ -6,6 +6,7 @@ const { interface, bytecode } = require('../compile');
 
 let inbox;
 let accounts;
+
 beforeEach(async () => {
     // Get a list of all accounts
     accounts = await web3.eth.getAccounts()
@@ -17,7 +18,20 @@ beforeEach(async () => {
 });
 
 describe('Inbox', () => {
+
     it('deploys a contract', () => {
-        console.log(inbox);
+        assert.ok(inbox.options.address);
     });
+
+    it('has a default message', async () => {
+        const message = await inbox.methods.getMessage().call();
+        assert.equal(message, 'Hi there!');
+    });
+
+    it('can change the message ', async () => {
+        await inbox.methods.setMessage('bye').send({ from: accounts[0] });
+        const message = await inbox.methods.getMessage().call();
+        assert.equal(message, 'bye');
+    });
+// rinkeby.infura.io/ws/v3/24cf536d0f144b868d40bc251e62342e
 });
